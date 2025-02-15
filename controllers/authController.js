@@ -7,33 +7,36 @@ require('dotenv').config();
 exports.register = async (req, res) => {
     try {
       const { fullName, email, password, role } = req.body;
-      
-      // Debugging: Log the incoming request body
-      console.log('Request Body:', req.body);
   
-      // Check if password is valid before hashing
-      if (!password || typeof password !== 'string') {
-        console.error('Password is invalid:', password);
-        return res.status(400).json({ error: 'Invalid password input' });
+      // Debugging the request body
+      console.log("Request Body:", req.body);
+  
+      // Debugging the password type and value
+      console.log("Password type:", typeof password);
+      console.log("Password value:", password);
+  
+      // Check if password is a string before hashing
+      if (typeof password !== "string") {
+        console.error("Password is not a string");
+        return res.status(400).json({ error: "Password must be a string" });
       }
   
-      // Debugging: Log password before hashing (ensure it's a string)
-      console.log('Password before hashing:', password);
+      console.log("Password before hashing:", password);
   
+      // Hash the password using bcryptjs
       const hashedPassword = await bcrypt.hash(password, 10);
   
-      // Debugging: Log hashed password (just for debugging purposes, be careful with production environments)
-      console.log('Hashed Password:', hashedPassword);
+      // Debugging the hashed password
+      console.log("Hashed password:", hashedPassword);
   
+      // Create user with hashed password
       const user = await User.create({ fullName, email, password: hashedPassword, role });
   
-      // Debugging: Log user object after creation
-      console.log('Created User:', user);
-  
+      // Respond with success message
       res.status(201).json({ message: 'User registered', user });
     } catch (err) {
-      // Debugging: Log the error
-      console.error('Error occurred during registration:', err.message);
+      // Debugging error
+      console.error("Error occurred during registration:", err);
       res.status(500).json({ error: err.message });
     }
   };
