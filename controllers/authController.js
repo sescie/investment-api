@@ -5,15 +5,39 @@ const { User } = require('../models');
 require('dotenv').config();
 
 exports.register = async (req, res) => {
-  try {
-    const { fullName, email, password, role } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({ fullName, email, password: hashedPassword, role });
-    res.status(201).json({ message: 'User registered', user });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
+    try {
+      const { fullName, email, password, role } = req.body;
+      
+      // Debugging: Log the incoming request body
+      console.log('Request Body:', req.body);
+  
+      // Check if password is valid before hashing
+      if (!password || typeof password !== 'string') {
+        console.error('Password is invalid:', password);
+        return res.status(400).json({ error: 'Invalid password input' });
+      }
+  
+      // Debugging: Log password before hashing (ensure it's a string)
+      console.log('Password before hashing:', password);
+  
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      // Debugging: Log hashed password (just for debugging purposes, be careful with production environments)
+      console.log('Hashed Password:', hashedPassword);
+  
+      const user = await User.create({ fullName, email, password: hashedPassword, role });
+  
+      // Debugging: Log user object after creation
+      console.log('Created User:', user);
+  
+      res.status(201).json({ message: 'User registered', user });
+    } catch (err) {
+      // Debugging: Log the error
+      console.error('Error occurred during registration:', err.message);
+      res.status(500).json({ error: err.message });
+    }
+  };
+  
 
 exports.login = async (req, res) => {
   try {
