@@ -23,8 +23,18 @@ exports.register = async (req, res) => {
   
       console.log("Password before hashing:", password);
   
+      // Check the salt rounds value to ensure it's a valid number
+      const saltRounds = 10;
+      console.log("Salt rounds:", saltRounds);
+  
+      // Check if saltRounds is a valid number
+      if (typeof saltRounds !== 'number') {
+        console.error("Salt rounds is not a valid number");
+        return res.status(400).json({ error: "Salt rounds should be a number" });
+      }
+  
       // Hash the password using bcryptjs
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
   
       // Debugging the hashed password
       console.log("Hashed password:", hashedPassword);
